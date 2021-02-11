@@ -31,7 +31,7 @@ h1{
 
 .reset{
     position: absolute;
-    top: 95vh;
+    top: 80vh;
     left: 50%;
     transform: translate(-50%);
     border: 1px solid black;
