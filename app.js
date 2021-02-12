@@ -1,7 +1,7 @@
 //Selectors
 var tableRow = document.getElementsByTagName('tr');
 var tableCell = document.getElementsByTagName('td');
-var tableSlot = document.querySelector('.slot');
+var tableSlot = document.querySelectorAll('.slot');
 const playerTurn = document.querySelector('.player-turn');
 const reset = document.querySelector('.reset');
 
@@ -46,15 +46,30 @@ function changeColor(e) {
             row.push(tableRow[i].children[column]);
             if (currentPlayer === 1) {
                 row[0].style.backgroundColor = player1Color;
-                if (horizontalCheck() || verticalCheck()) {
-                    return (alert('winner'));
+                if (horizontalCheck() || verticalCheck() || diagonalCheck1() || diagonalCheck2()) {
+                    playerTurn.textContent = `Ganó ${player1}!!`;
+                    playerTurn.style.color = player1Color;
+                    return (alert(`Ganó ${player1}!!`));
+                } else if (drawCheck()) {
+                    playerTurn.textContent = `Es un empate!!`;
+                    return (alert(`Es un empate!!`));
+                } else {
+                    playerTurn.textContent = `Es el turno de: ${player2}!`;
+                    return currentPlayer = 2;
                 }
-                playerTurn.textContent = `Es el turno de: ${player2}!`;
-                return currentPlayer = 2;
             } else {
                 row[0].style.backgroundColor = player2Color;
-                playerTurn.textContent = `Es el turno de: ${player1}!`;
-                return currentPlayer = 1;
+                if (horizontalCheck() || verticalCheck() || diagonalCheck1() || diagonalCheck2()) {
+                    playerTurn.textContent = `Ganó ${player2}!!`;
+                    playerTurn.style.color = player2Color;
+                    return (alert(`Ganó ${player2}!!`));
+                } else if (drawCheck()) {
+                    playerTurn.textContent = `Es un empate!!`;
+                    return (alert(`Es un empate!!`));
+                } else {
+                    playerTurn.textContent = `Es el turno de: ${player1}!`;
+                    return currentPlayer = 1;
+                }
             }
         }
     }
@@ -63,7 +78,7 @@ function changeColor(e) {
 
 //Win validation methods
 function colorMatchCheck(one, two, three, four) {
-    return (one === two && one === three && one === four && one !== 'white')
+    return (one == two && one === three && one === four && one !== 'white')
 }
 
 function horizontalCheck() {
@@ -88,5 +103,46 @@ function verticalCheck() {
     }
 }
 
+function diagonalCheck1() {
+    for (let col = 0; col < 4; col++) {
+        for (let row = 0; row < 3; row++) {
+            if (colorMatchCheck(tableRow[row].children[col].style.backgroundColor, tableRow[row + 1].children[col + 1].style.backgroundColor,
+                tableRow[row + 2].children[col + 2].style.backgroundColor, tableRow[row + 3].children[col + 3].style.backgroundColor)) {
+                return true;
+            }
+        }
+    }
+}
 
+function diagonalCheck2() {
+    for (let col = 0; col < 4; col++) {
+        for (let row = 5; row > 2; row--) {
+            if (colorMatchCheck(tableRow[row].children[col].style.backgroundColor, tableRow[row - 1].children[col + 1].style.backgroundColor,
+                tableRow[row - 2].children[col + 2].style.backgroundColor, tableRow[row - 3].children[col + 3].style.backgroundColor)) {
+                return true;
+            }
+        }
+    }
+}
+
+function drawCheck() {
+    let fullSlot = [];
+    for (let i = 0; i < tableCell.length; i++) {
+        if (tableCell[i].style.backgroundColor !== 'white') {
+            fullSlot.push(tableCell[i]);
+        }
+        if (fullSlot.length === tableCell.length) {
+            return true;
+        }
+    }
+}
+
+reset.addEventListener('click', () => {
+    tableSlot.forEach(slot => {
+        slot.style.backgroundColor = 'white';
+
+    });
+    playerTurn.style.Color = 'black';
+    return (currentPlayer === 1 ? playerTurn.textContent = `Es el turno de: ${player1}!` : playerTurn.textContent = `Es el turno de: ${player2}!`)
+})
 
